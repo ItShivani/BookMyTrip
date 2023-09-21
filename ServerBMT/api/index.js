@@ -7,7 +7,8 @@ import roomsRoute from "./routes/rooms.js"
 import usersRoute from "./routes/users.js"
 import cookieParser from "cookie-parser"
 const app = express()
-
+import cors from "cors";
+app.use(cors());
 dotenv.config()
 const connect = async () => {
     try{
