@@ -4,10 +4,12 @@ import {faB, faBed,faCar,faPlane,faTaxi,faCalendarDays,faPerson} from "@fortawes
 import {DateRange} from 'react-date-range';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
-import {useState} from 'react';
+import {useState,useContext} from 'react';
 import {format} from 'date-fns';
 import {useNavigate} from 'react-router-dom';
-
+import { SearchContext } from "../../context/SearchContext";
+import {AuthContext} from "../../context/AuthContext.jsx";
+import {Link} from "react-router-dom";
 
 const Header = ({type}) => {
     const [destination,setDestination] = useState("");
@@ -35,10 +37,15 @@ const Header = ({type}) => {
         });
     };
 
+    const {dispatch} = useContext(SearchContext)
+
     const navigate = useNavigate();
     const handleSearch=()=>{
+        dispatch({type:"NEW_SEARCH",payload:{destination,date,specs}})
         navigate("/hotels",{state:{destination,date,specs}})
     }
+    
+    const { user } = useContext(AuthContext);
   return (
     <div className="header">
         <div className={type==="list"?"headerContainer listMode":"headerContainer"}>

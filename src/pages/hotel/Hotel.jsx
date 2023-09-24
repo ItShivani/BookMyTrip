@@ -5,18 +5,33 @@ import { faCircleArrowLeft, faCircleArrowRight, faCircleXmark, faLocationDot } f
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import MailList from '../../components/mailList/MailList'
 import Footer from '../../components/footer/Footer'
-import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useState,useContext } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import useFetch from "../../hooks/useFetch"
-
+import { SearchContext } from "../../context/SearchContext";
+import { AuthContext } from "../../context/AuthContext";
+import Reserve from "../../components/reserve/Reserve";
 
 const Hotel = () => {
+  const {user} = useContext(AuthContext)
+  const navigate = useNavigate();
   const location = useLocation()
   const id = location.pathname.split("/")[2]
   const [slideNumber,setSlideNumber] = useState(0);
   const [open,setOpen] = useState(false);
-
+  const [openModal,setOpenModal] = useState(false)
   const {data,loading,error} = useFetch(`http://localhost:8800/api/hotels/find/${id}`)
+  const { date,specs } = useContext(SearchContext);
+  console.log(date)
+
+  const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
+  function dayDifference(date1, date2) {
+    const timeDiff = Math.abs(date2.getTime() - date1.getTime());
+    const diffDays = Math.ceil(timeDiff / MILLISECONDS_PER_DAY);
+    return diffDays;
+  }
+
+  const days = dayDifference(date[0].endDate, date[0].startDate);
 
   const handleOpen =(i) => {
     setSlideNumber(i);
@@ -33,6 +48,16 @@ const Hotel = () => {
     }
     setSlideNumber(newSlideNumber);
   }
+
+  const handleClick = () => {
+    if(user){
+      setOpenModal(true)
+    }
+    else{
+      navigate("/login")
+    }
+  }
+
   return (
     <div>
         <Navbar/>
@@ -68,16 +93,17 @@ const Hotel = () => {
                 <p className="hotelDesc">{data.desc}</p>
               </div>
               <div className="hotelDetailsPrice">
-                  <h1>Perfect Stay</h1>
+                  <h1>Perfect Stay for a {days}-night stay</h1>
                     <span>Located in the heart of the city this hotel has a rating of 8.9!</span>
-                    <h2><b>$550 </b>(3 nights)</h2>
-                    <button>Book now!</button>
+                    <h2><b>${days*data.cheapestPrice*specs.room} </b>({days} nights)</h2>
+                    <button onClick={handleClick}>Book now!</button>
               </div>
             </div>
           </div>
         </div>}
         <MailList/>
         <Footer/>
+        {openModal && <Reserve setOpen={setOpenModal} hotelId={id}/>}
     </div>
   )
 }
