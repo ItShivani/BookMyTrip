@@ -9,7 +9,7 @@ BookMyTrip is a dynamic Hotel Booking Website built using the MERN stack. The fr
 
 **Features**
 
--Login:user authentication, JWT (JSON Web Tokens) for secure user sessions, role-based authorization, and integration of JWT with cookies for improved user session management and security.
+-Login: User authentication, JWT (JSON Web Tokens) for secure user sessions, role-based authorization, and integration of JWT with cookies for improved user session management and security.
 
 
 -Search: Search by city and budget functionality using backend API
